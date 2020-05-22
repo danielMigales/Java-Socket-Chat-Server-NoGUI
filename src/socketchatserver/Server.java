@@ -4,7 +4,6 @@ package socketchatserver;
  *
  * @author daniel migales puertas
  *
- *
  */
 import dataPaquete.DataPaquete;
 import java.io.IOException;
@@ -39,10 +38,20 @@ public class Server implements Runnable {
                     var userName = inputData.getNombreUsuario();
                     var ipAddress = inputData.getDireccionIP();
                     var message = inputData.getMensaje();
+
                     // visualizar el mensaje en el area del mensaje en la interfaz
+                    System.out.println("Mensaje encriptado recibido:");
                     var concatenatedMessage = userName + "/" + ipAddress + " dice: \t" + message + "\n";
                     System.out.println(concatenatedMessage);
 
+                    //desencriptado del mensaje recibido
+                    Cryptography cryptoMessage = new Cryptography();
+                    try {
+                        String decryptedMessage = cryptoMessage.decrypt(message);
+                        System.out.println("Mensaje Desencriptado: " + decryptedMessage + "\n");
+                    } catch (Exception ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         } catch (IOException ex) {
@@ -52,6 +61,5 @@ public class Server implements Runnable {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("No se encuentra la clase DataPaquete");
         }
-
     }
 }
