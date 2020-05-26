@@ -8,6 +8,7 @@ package socketchatserver;
 import dataPaquete.DataPaquete;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -16,6 +17,11 @@ import java.util.logging.Logger;
 public class Server implements Runnable {
 
     private final int SERVER_PORT = 40000;
+    String userName;
+    String ipAddress;
+    String message;
+    String destinatario;
+
 
     @Override
     public void run() {
@@ -35,13 +41,14 @@ public class Server implements Runnable {
                         java.io.ObjectInputStream inputFlow = new ObjectInputStream(socket.getInputStream())) {
                     //extraer el mensaje
                     DataPaquete inputData = (DataPaquete) inputFlow.readObject();
-                    var userName = inputData.getNombreUsuario();
-                    var ipAddress = inputData.getDireccionIP();
-                    var message = inputData.getMensaje();
+                    userName = inputData.getNombreUsuario();
+                    ipAddress = inputData.getDireccionIP();
+                    message = inputData.getMensaje();
+                    destinatario = inputData.getDestinatarioIP();
 
                     // visualizar el mensaje en el area del mensaje en la interfaz
                     System.out.println("Mensaje encriptado recibido:");
-                    var concatenatedMessage = userName + "/" + ipAddress + " dice: \t" + message + "\n";
+                    var concatenatedMessage = userName + "/" + ipAddress + " dice: \t" + message + " para: " + destinatario + "\n";
                     System.out.println(concatenatedMessage);
 
                     //desencriptado del mensaje recibido
@@ -61,5 +68,34 @@ public class Server implements Runnable {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("No se encuentra la clase DataPaquete");
         }
+        
+        enviarAlDestinatario();
+
+    }
+    
+    
+    public void enviarAlDestinatario() {
+
+        //se envia encriptado
+        DataPaquete outputData = new DataPaquete(userName, ipAddress, message);
+        //System.out.println(mensaje);
+
+        try {
+
+            //flujo de informacion y se asocia al socket
+            try ( //crear el socket (conector con el servidor)
+                    Socket socket = new Socket(destinatario, SERVER_PORT); //flujo de informacion y se asocia al socket
+                    java.io.ObjectOutputStream outFlow = new ObjectOutputStream(socket.getOutputStream())) {
+                //enviar al dato
+                outFlow.writeObject(outputData);
+            }
+
+           
+
+        } catch (IOException ex) {
+          
+            System.out.println("No se pudo crear el socket para conectar con  la direccion " + destinatario);
+        }
+
     }
 }

@@ -11,6 +11,8 @@ public class SocketChatServer {
 
             var server = new Thread(new Server());
             server.start();
+            
+            
     }
 
 }
