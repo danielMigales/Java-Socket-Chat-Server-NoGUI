@@ -59,7 +59,7 @@ public class Server implements Runnable {
                     Cryptography cryptoMessage = new Cryptography();
                     try {
                         String decryptedMessage = cryptoMessage.decrypt(message);
-                        System.out.println("Mensaje Desencriptado: " + decryptedMessage + "\n");
+                        //System.out.println("Mensaje Desencriptado: " + decryptedMessage + "\n");
                     } catch (Exception ex) {
                         Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                     }
